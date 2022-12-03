@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WOF Game</string>
+    <string name="slogan">Test Your Knowledge</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="submit">Submit</string>
+    <string name="sign_up">Sign Up</string>
+</resources>

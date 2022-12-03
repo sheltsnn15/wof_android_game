@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "99295396660",
+    "project_id": "wof-game-746dd",
+    "storage_bucket": "wof-game-746dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99295396660:android:0677553193917e9d851b61",
+        "android_client_info": {
+          "package_name": "com.example.wof_android_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99295396660-ov7leoatpran24nl6t6kevrdk8ph9maq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wof_android_game",
+            "certificate_hash": "a73574db07f816ed0485b9dc75caafddbd41ec07"
+          }
+        },
+        {
+          "client_id": "99295396660-qu40h0q14g7ggjd8atmrc42g2mgmcucr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz9DIztlx_XvVwg_YJqUH13qefT35KoVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99295396660-qu40h0q14g7ggjd8atmrc42g2mgmcucr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
