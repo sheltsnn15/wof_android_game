@@ -8,11 +8,17 @@ public class User {
     private String email;
     private ArrayList<Scores> scores;
 
-    public User(String username, String password, String email, ArrayList<Scores> scores) {
+    public User(String username, String email, String password, ArrayList<Scores> scores) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.scores = scores;
+    }
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     public User() {
@@ -53,5 +59,14 @@ public class User {
 
     public void addUserScores(Scores scores) {
         this.scores.add(scores);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
