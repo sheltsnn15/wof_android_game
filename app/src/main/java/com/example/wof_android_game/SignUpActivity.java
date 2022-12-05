@@ -2,8 +2,10 @@ package com.example.wof_android_game;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -15,9 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -27,8 +34,9 @@ public class SignUpActivity extends AppCompatActivity {
     TextInputLayout username_til, password_til, email_til;
 
     ProgressBar progressBar;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseFirestore firebaseFirestore;
     private FirebaseAuth mAuth;
+    private String userID;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +59,8 @@ public class SignUpActivity extends AppCompatActivity {
         login_btn = findViewById(R.id.sign_up_page_login_btn);
 
         mAuth = FirebaseAuth.getInstance();
-
-        //progressBar = findViewById(R.id.progressBar);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        progressBar = findViewById(R.id.progressBar);
 
         sign_up_btn.setOnClickListener((view) -> registerUser());
 
@@ -61,12 +69,13 @@ public class SignUpActivity extends AppCompatActivity {
 
     public boolean validateUserName() {
         String username = username_til.getEditText().getText().toString().trim();
-        String noWhiteSpaces = "\\A\\w{4,20}\\z"; // – no white-space\n" +;
+        Pattern whitespace = Pattern.compile("\\s\\s");
+        Matcher matcher = whitespace.matcher(username);
         if (username.isEmpty()) {
             username_til.setError("Error, Enter Username");
         } else if (username.length() <= 8) {
             username_til.setError("Error, Username Too Short");
-        } else if (!username.matches(noWhiteSpaces)) {
+        } else if (matcher.find()) {
             username_til.setError("Error, No White Spaces");
         } else {
             username_til.setError(null);
@@ -120,28 +129,36 @@ public class SignUpActivity extends AppCompatActivity {
         if (!validateEmail() | !validateUserName() | !validatePassword()) {
             return;
         }
+
+        progressBar.setVisibility(View.VISIBLE);
         // get values inputted by user
         String username = Objects.requireNonNull(username_til.getEditText()).getText().toString().trim();
         String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
         String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
 
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        String userID = mAuth.getCurrentUser().getUid();
-                        Toast.makeText(SignUpActivity.this, "Registration Complete", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onSuccess: user Profile is created for " + userID);
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                // send verification link
 
-                });
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                assert firebaseUser != null;
+                firebaseUser.sendEmailVerification().addOnSuccessListener(aVoid -> Toast.makeText(SignUpActivity.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Log.d(TAG, "onFailure: Email not sent " + e.getMessage()));
+
+                Toast.makeText(SignUpActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
+                userID = mAuth.getCurrentUser().getUid();
+                DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+                User user = new User(username, email, password, null);
+                Map<String, User> userHashMap = new HashMap<>();
+                userHashMap.put("user_profile", user);
+                documentReference.set(userHashMap).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: user Profile is created for " + userID)).addOnFailureListener(e -> Log.d(TAG, "onFailure: " + e));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+
+            } else {
+                Toast.makeText(SignUpActivity.this, "Error ! " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
     }
 }

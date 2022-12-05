@@ -7,18 +7,30 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
     Button sign_up_btn, login_btn, forgot_password_btn;
     ImageView imageView;
     TextView logo_tv;
-    TextInputLayout username_til, password_til, email_til;
+    TextInputLayout password_til, email_til;
+
+    ProgressBar progressBar;
+
+    FirebaseFirestore firebaseFirestore;
+    FirebaseAuth mAuth;
+    String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +54,11 @@ public class LoginActivity extends AppCompatActivity {
         login_btn = findViewById(R.id.login_page_submit_btn);
         forgot_password_btn = findViewById(R.id.forgot_password_btn);
 
-        username_til = findViewById(R.id.username);
         password_til = findViewById(R.id.password);
         email_til = findViewById(R.id.email);
+
+        mAuth = FirebaseAuth.getInstance();
+        progressBar = findViewById(R.id.progressBar);
 
 
         sign_up_btn.setOnClickListener((view) -> {
@@ -57,5 +71,58 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        login_btn.setOnClickListener((view) -> loginUser());
+
     }
+
+    public boolean validateEmail() {
+        String email = email_til.getEditText().getText().toString().trim();
+        String regex = "^(.+)@(.+)$";
+        if (email.isEmpty()) {
+            email_til.setError("Error, Enter Email");
+        } else if (!email.matches(regex)) {
+            email_til.setError("Error, Invalid Email Address");
+        }
+        return true;
+    }
+
+    public boolean validatePassword() {
+        String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
+        String regex_password_validation = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
+        if (password.isEmpty()) {
+            password_til.setError("Error, Enter Password");
+        } else if (!password.matches(regex_password_validation)) {
+            password_til.setError("Error, Password Too Weak");
+        } else {
+            password_til.setError(null);
+        }
+        return true;
+    }
+
+    public void loginUser() {
+
+        if (!validateEmail() | !validatePassword()) {
+            return;
+        }
+
+        // get values inputted by user
+        String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
+        String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
+        progressBar.setVisibility(View.VISIBLE);
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
+            } else {
+                Toast.makeText(LoginActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
 }

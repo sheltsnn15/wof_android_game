@@ -67,7 +67,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
-                    android:src="" />
+                    android:src="@drawable/thumbs_up__icon" />
 
                 <TextView
                     android:id="@+id/lowest_guess_record_lbl"
@@ -77,7 +77,7 @@
                     android:fontFamily="@font/bungee"
                     android:includeFontPadding="false"
                     android:text="Lowest Guess Record"
-                    android:textSize="20dp" />
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/lowest_guess_record"
@@ -111,7 +111,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
-                    android:src="" />
+                    android:src="@drawable/thumbs_down_icon" />
 
                 <TextView
                     android:id="@+id/highest_guess_record_lbl"
@@ -121,7 +121,7 @@
                     android:fontFamily="@font/bungee"
                     android:includeFontPadding="false"
                     android:text="Highest Guess Record"
-                    android:textSize="20dp" />
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/highest_guess_record"
