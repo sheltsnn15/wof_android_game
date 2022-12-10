@@ -157,4 +157,3 @@ public class WOFGame {
         guessedLetters.add('u');
     }
 }
-Footer
