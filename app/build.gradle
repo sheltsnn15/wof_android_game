@@ -1,12 +1,17 @@
 plugins {
     id 'com.android.application'
-    // Add the Google services Gradle plugin
-    id 'com.google.gms.google-services'
 }
+
 
 android {
     namespace 'com.example.wof_android_game'
     compileSdk 33
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 
     defaultConfig {
         applicationId "com.example.wof_android_game"
@@ -40,6 +45,8 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.8'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

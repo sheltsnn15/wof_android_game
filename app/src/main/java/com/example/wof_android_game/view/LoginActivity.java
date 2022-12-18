@@ -1,4 +1,4 @@
-package com.example.wof_android_game;
+package com.example.wof_android_game.view;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -13,9 +13,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.wof_android_game.R;
+import com.example.wof_android_game.UserProfileActivity;
+import com.example.wof_android_game.controller.DB_Handler;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -27,10 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputLayout password_til, email_til;
 
     ProgressBar progressBar;
-
-    FirebaseFirestore firebaseFirestore;
-    FirebaseAuth mAuth;
-    String userID;
+    DB_Handler db_handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
-
         Resources res = getResources();
 
         imageView = findViewById(R.id.minion_img);
@@ -57,8 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         password_til = findViewById(R.id.password);
         email_til = findViewById(R.id.email);
 
-        mAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
+        db_handler = new DB_Handler(this);
 
 
         sign_up_btn.setOnClickListener((view) -> {
@@ -76,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean validateEmail() {
-        String email = email_til.getEditText().getText().toString().trim();
+        String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
         String regex = "^(.+)@(.+)$";
         if (email.isEmpty()) {
             email_til.setError("Error, Enter Email");
@@ -110,18 +106,19 @@ public class LoginActivity extends AppCompatActivity {
 
         // get values inputted by user
         String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
+        String username = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
         String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), UserProfileActivity.class));
-            } else {
-                Toast.makeText(LoginActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+        boolean checkUser = db_handler.checkUsernamePassword(username, password);
+        if (checkUser) {
+            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(LoginActivity.this, "Invalid Credentials, Login Unsuccessful", Toast.LENGTH_SHORT).show();
+        }
+        Boolean insert = db_handler.insertUserDetails(username, email, password);
 
     }
 

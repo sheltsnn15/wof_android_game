@@ -1,10 +1,12 @@
-package com.example.wof_android_game;
+package com.example.wof_android_game.view;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.wof_android_game.R;
 
 public class MyCustomDialog {
 

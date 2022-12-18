@@ -1,4 +1,4 @@
-package com.example.wof_android_game;
+package com.example.wof_android_game.view;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.wof_android_game.R;
 
 public class MainActivity extends AppCompatActivity {
 

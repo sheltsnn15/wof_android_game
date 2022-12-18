@@ -1,10 +1,7 @@
-package com.example.wof_android_game;
-
-import static android.content.ContentValues.TAG;
+package com.example.wof_android_game.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,14 +11,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.wof_android_game.R;
+import com.example.wof_android_game.controller.DB_Handler;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,9 +27,11 @@ public class SignUpActivity extends AppCompatActivity {
     TextInputLayout username_til, password_til, email_til;
 
     ProgressBar progressBar;
-    FirebaseFirestore firebaseFirestore;
-    private FirebaseAuth mAuth;
-    private String userID;
+    DB_Handler db_handler;
+
+    {
+
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +53,7 @@ public class SignUpActivity extends AppCompatActivity {
         sign_up_btn = findViewById(R.id.sign_up_page_submit_btn);
         login_btn = findViewById(R.id.sign_up_page_login_btn);
 
-        mAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        db_handler = new DB_Handler(this);
         progressBar = findViewById(R.id.progressBar);
 
         sign_up_btn.setOnClickListener((view) -> registerUser());
@@ -114,16 +108,6 @@ public class SignUpActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            currentUser.reload();
-        }
-    }
-
     public void registerUser() {
 
         if (!validateEmail() | !validateUserName() | !validatePassword()) {
@@ -136,29 +120,18 @@ public class SignUpActivity extends AppCompatActivity {
         String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
         String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-
-                // send verification link
-
-                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                assert firebaseUser != null;
-                firebaseUser.sendEmailVerification().addOnSuccessListener(aVoid -> Toast.makeText(SignUpActivity.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Log.d(TAG, "onFailure: Email not sent " + e.getMessage()));
-
-                Toast.makeText(SignUpActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
-                userID = mAuth.getCurrentUser().getUid();
-                DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
-                User user = new User(username, email, password, null);
-                Map<String, User> userHashMap = new HashMap<>();
-                userHashMap.put("user_profile", user);
-                documentReference.set(userHashMap).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: user Profile is created for " + userID)).addOnFailureListener(e -> Log.d(TAG, "onFailure: " + e));
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-
+        Boolean checkUser = db_handler.checkUserName(username);
+        if (!checkUser) {
+            Boolean insert = db_handler.insertUserDetails(username, email, password);
+            if (insert) {
+                Toast.makeText(SignUpActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
             } else {
-                Toast.makeText(SignUpActivity.this, "Error ! " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
+                Toast.makeText(SignUpActivity.this, "Sign Up Unsuccessful", Toast.LENGTH_SHORT).show();
             }
-        });
-
+        } else {
+            Toast.makeText(SignUpActivity.this, "User already exists, Sign Up Unsuccessful", Toast.LENGTH_SHORT).show();
+        }
     }
 }

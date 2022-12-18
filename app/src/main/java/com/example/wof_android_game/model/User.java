@@ -1,19 +1,9 @@
-package com.example.wof_android_game;
-
-import java.util.ArrayList;
+package com.example.wof_android_game.model;
 
 public class User {
     private String username;
     private String password;
     private String email;
-    private ArrayList<Scores> scores;
-
-    public User(String username, String email, String password, ArrayList<Scores> scores) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.scores = scores;
-    }
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -47,18 +37,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public ArrayList<Scores> getScores() {
-        return scores;
-    }
-
-    public void setScores(ArrayList<Scores> scores) {
-        this.scores = scores;
-    }
-
-    public void addUserScores(Scores scores) {
-        this.scores.add(scores);
     }
 
     @Override
