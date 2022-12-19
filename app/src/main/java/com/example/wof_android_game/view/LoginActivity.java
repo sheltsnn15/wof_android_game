@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wof_android_game.R;
-import com.example.wof_android_game.UserProfileActivity;
 import com.example.wof_android_game.controller.DB_Handler;
 import com.google.android.material.textfield.TextInputLayout;
 

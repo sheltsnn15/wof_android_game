@@ -2,16 +2,19 @@ plugins {
     id 'com.android.application'
 }
 
-
 android {
     namespace 'com.example.wof_android_game'
     compileSdk 33
 
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+//    testOptions {
+//        unitTests {
+//            includeAndroidResources = true
+//        }
+//    }
 
     defaultConfig {
         applicationId "com.example.wof_android_game"

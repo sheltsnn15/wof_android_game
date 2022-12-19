@@ -15,7 +15,7 @@
             android:name=".view.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".UserProfileActivity"
+            android:name=".view.UserProfileActivity"
             android:exported="false" />
         <activity
             android:name=".view.SignUpActivity"

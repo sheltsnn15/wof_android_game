@@ -1,5 +1,7 @@
 package com.example.wof_android_game.controller;
 
+import static java.nio.file.Files.readAllLines;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,11 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.wof_android_game.model.UserProfile;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class DB_Handler extends SQLiteOpenHelper {
     // schema of database
@@ -31,9 +34,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String KEY_TOTAL_AMOUNT_TRIES = "total_amount_tries";
     private static final String KEY_DATE_PLAYED = "date_played";
     private static final String KEY_DIFFICULTY_LEVEL = "difficulty_level";
-    private static final String PHRASES_TXT = "com/example/wof_android_game/phrases.txt";
-
-    ArrayList<HashMap<String, String>> gamesList, userList;
+    private static final String PHRASES_TXT = "phrases.txt";
 
 
     public DB_Handler(Context context) {
@@ -69,6 +70,12 @@ public class DB_Handler extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(CREATE_PHRASES_TABLE);
         sqLiteDatabase.execSQL(CREATE_GAMES_TABLE);
+
+        if (!checkTableIsEmpty(Table_Phrases))
+            if (readPhrasesTxt()) {
+                Logger.getLogger(getClass().getName()).warning("Phrases Loaded: " + PHRASES_TXT);
+            }
+
     }
 
     @Override
@@ -93,47 +100,84 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     public boolean readPhrasesTxt() {
-        boolean isAllSucessful;
-        int lineCount = 0, countReadSuccess = 0;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(PHRASES_TXT))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                lineCount++;
-                isAllSucessful = insertPhrases(line);
-                if (isAllSucessful)
-                    countReadSuccess++;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        File file = new File(PHRASES_TXT);
+        if (!file.exists()) {
+            Logger.getLogger(getClass().getName()).warning("File does not exist: " + PHRASES_TXT);
+            return false;
         }
-        return lineCount == countReadSuccess;
+        long successfulCount = 0;
+        try {
+            List<String> lines = readAllLines(file.toPath());
+            for (String line : lines) {
+                successfulCount = insertPhrases(line);
+            }
+            return successfulCount == lines.size();
+        } catch (IOException e) {
+            Logger.getLogger(getClass().getName()).warning("Error reading file: " + e.getMessage());
+            return false;
+        }
     }
 
-    boolean insertPhrases(String phrase) {
+    long insertPhrases(String phrase) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
         cv.put(KEY_PHRASES, phrase);
-
-        long newRowId = db.insert(Table_Users, null, cv);
+        // Insert the row and get the row ID of the inserted row
+        long newRowId = db.insert(Table_Phrases, null, cv);
+        // Close the database to free up resources
         db.close();
-        // check if not successful
-        return newRowId != -1;
+        return newRowId;
     }
 
-    public boolean getPhrase(int index) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Table_Phrases + " WHERE " + KEY_ID + " = " + index, null);
-        return cursor.getCount() > 0;
+
+    public int generateRandNumber(int min, int max) {
+        int range = max - min + 1;
+        return (int) (Math.random() * range) + min;
+
     }
+
+    public String getPhrase(int index) {
+        String value = "";
+        String query = "SELECT * FROM " + Table_Phrases + " WHERE " + KEY_ID + " = ?";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(index)});
+
+        if (cursor.getCount() == 0) {
+            // index is out of bounds
+            Logger.getLogger(getClass().getName()).warning("Index " + index + " is out of bounds.");
+            value = null;
+        }
+        if (cursor.moveToFirst()) {
+            // do something with the element
+            // do something with the element
+            int columnIndex = cursor.getColumnIndex(KEY_PHRASES);
+            // column was found, so you can retrieve its value
+            value = cursor.getString(columnIndex);
+        }
+        db.close();
+        cursor.close();
+        return value;
+    }
+
+    public boolean checkTableIsEmpty(String tableName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + tableName, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        db.close();
+        cursor.close();
+        return count == 0;
+    }
+
 
     public boolean checkUserName(String username) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Table_Users +
-                " WHERE " + KEY_USERNAME + " = ? ", new String[]{username});
-        return cursor.getCount() > 0;
+        Cursor cursor = db.query(Table_Users, new String[]{KEY_ID}, KEY_USERNAME + "=?",
+                new String[]{username}, null, null, null, null);
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return exists;
     }
 
     public boolean checkUsernamePassword(String username, String password) {
@@ -142,7 +186,10 @@ public class DB_Handler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + Table_Users +
                         " WHERE " + KEY_USERNAME + " = ? AND " + KEY_PASSWORD + " = ?"
                 , new String[]{username, password});
-        return cursor.getCount() > 0;
+        boolean exists = cursor.getCount() > 0;
+        db.close();
+        cursor.close();
+        return exists;
     }
 
     public ArrayList<HashMap<String, String>> getUsers() {
@@ -160,6 +207,8 @@ public class DB_Handler extends SQLiteOpenHelper {
             user.put("password", cursor.getString(cursor.getColumnIndexOrThrow(KEY_PASSWORD)));
             userList.add(user);
         }
+        db.close();
+        cursor.close();
         return userList;
     }
 
@@ -179,7 +228,8 @@ public class DB_Handler extends SQLiteOpenHelper {
             gamesList.add(user_games);
             UserProfile userProfile = new UserProfile(gamesList, username);
         }
-
+        db.close();
+        cursor.close();
         return gamesList;
 
     }

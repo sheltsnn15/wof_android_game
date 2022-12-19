@@ -176,6 +176,7 @@ public class WOFGame {
 
 
     private String getRandomPhrase() {
+        return "";
     }
 
     public void resetValues() {

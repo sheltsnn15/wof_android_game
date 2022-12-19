@@ -1,8 +1,10 @@
-package com.example.wof_android_game;
+package com.example.wof_android_game.view;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
+import com.example.wof_android_game.R;
 
 public class UserProfileActivity extends AppCompatActivity {
 
