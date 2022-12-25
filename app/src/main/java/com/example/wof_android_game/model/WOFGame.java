@@ -1,16 +1,11 @@
 package com.example.wof_android_game.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
-enum DIFFICULTY_LEVEL {
-    LOW,
-    MEDIUM,
-    HIGH
-}
 
 
 public class WOFGame {
@@ -25,6 +20,8 @@ public class WOFGame {
     private List<Character> loadedPhrase;
     private List<Character> phraseToGuess;
     private String sentence;
+
+    private LocalDate currentDate;
 
 
     public WOFGame(DIFFICULTY_LEVEL difficultyLevel, String phrase) {
@@ -46,6 +43,14 @@ public class WOFGame {
         this.phrase = phrase;
         this.remainingTurns = this.initial_turns;
         this.setletters();
+
+        currentDate = LocalDate.now();
+
+//        if (!checkTableIsEmpty(Table_Phrases))
+//            if (readPhrasesTxt()) {
+//                Logger.getLogger(getClass().getName()).warning("Phrases Loaded: " + PHRASES_TXT);
+//            }
+
     }
 
     public int getUserChoice() {
@@ -285,5 +290,13 @@ public class WOFGame {
 
     public void setSentence(String sentence) {
         this.sentence = sentence;
+    }
+
+    public LocalDate getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(LocalDate currentDate) {
+        this.currentDate = currentDate;
     }
 }

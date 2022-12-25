@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.wof_android_game.model.User;
 import com.example.wof_android_game.model.UserProfile;
 
 import java.io.File;
@@ -20,21 +21,21 @@ import java.util.logging.Logger;
 public class DB_Handler extends SQLiteOpenHelper {
     // schema of database
 
-    private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "wheel_of_fortune_db";
-    private static final String Table_Users = "users";
-    private static final String Table_Games = "games";
-    private static final String Table_Phrases = "phrases";
-    private static final String KEY_ID = "id";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_PASSWORD = "password";
+    public static final String KEY_USERNAME = "username";
+    public static final int DB_VERSION = 1;
+    public static final String DB_NAME = "wheel_of_fortune_db";
+    public static final String Table_Users = "users";
+    public static final String Table_Games = "games";
+    public static final String Table_Phrases = "phrases";
+    public static final String KEY_ID = "id";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_PASSWORD = "password";
 
-    private static final String KEY_PHRASES = "phrases";
-    private static final String KEY_TOTAL_AMOUNT_TRIES = "total_amount_tries";
-    private static final String KEY_DATE_PLAYED = "date_played";
-    private static final String KEY_DIFFICULTY_LEVEL = "difficulty_level";
-    private static final String PHRASES_TXT = "phrases.txt";
+    public static final String KEY_PHRASES = "phrases";
+    public static final String KEY_TOTAL_AMOUNT_TRIES = "total_amount_tries";
+    public static final String KEY_DATE_PLAYED = "date_played";
+    public static final String KEY_DIFFICULTY_LEVEL = "difficulty_level";
+    public static final String PHRASES_TXT = "phrases.txt";
 
 
     public DB_Handler(Context context) {
@@ -71,10 +72,6 @@ public class DB_Handler extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_PHRASES_TABLE);
         sqLiteDatabase.execSQL(CREATE_GAMES_TABLE);
 
-        if (!checkTableIsEmpty(Table_Phrases))
-            if (readPhrasesTxt()) {
-                Logger.getLogger(getClass().getName()).warning("Phrases Loaded: " + PHRASES_TXT);
-            }
 
     }
 
@@ -238,6 +235,10 @@ public class DB_Handler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + Table_Users);
         db.close();
+    }
+
+
+    public User getUser(String userId) {
     }
 
 

@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/brown"
     android:orientation="vertical"
     tools:context=".view.UserProfileActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="160dp"
+        android:background="@color/brown"
         android:padding="20dp">
 
         <ImageView
@@ -18,6 +18,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerVertical="true"
+            android:contentDescription="TODO"
             android:src="@drawable/minion_kungfu_icon" />
 
         <TextView
@@ -25,29 +26,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/profile_img"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/profile_img"
             android:fontFamily="@font/bungee"
             android:includeFontPadding="false"
             android:text="Shelton"
-            android:textSize="20dp" />
+            android:textSize="35sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/aup_username_tv"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/profile_img"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/profile_img"
             android:includeFontPadding="false"
             android:text="shelzero"
-            android:textSize="14dp" />
+            android:textSize="24sp" />
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="0dp"
         android:padding="20dp">
 
         <com.google.android.material.card.MaterialCardView
@@ -61,34 +63,34 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:onClick="view_game_records_rl"
                 android:padding="5dp">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/thumbs_up__icon" />
+                    android:contentDescription="TODO"
+                    android:src="@drawable/baseline_score_24" />
 
                 <TextView
                     android:id="@+id/lowest_guess_record_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="@font/bungee"
-                    android:includeFontPadding="false"
-                    android:text="Lowest Guess Record"
-                    android:textSize="10dp" />
-
-                <TextView
-                    android:id="@+id/lowest_guess_record"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="-20dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginBottom="4dp"
                     android:fontFamily="@font/bungee"
                     android:includeFontPadding="false"
-                    android:text="123"
-                    android:textSize="25dp" />
+                    android:text="View Games Records"
+                    android:textAlignment="center"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
@@ -105,34 +107,34 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:onClick="edit_profile_info_rl"
                 android:padding="5dp">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/thumbs_down_icon" />
+                    android:contentDescription="TODO"
+                    android:src="@drawable/baseline_mode_edit_24" />
 
                 <TextView
                     android:id="@+id/highest_guess_record_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="@font/bungee"
-                    android:includeFontPadding="false"
-                    android:text="Highest Guess Record"
-                    android:textSize="10dp" />
-
-                <TextView
-                    android:id="@+id/highest_guess_record"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="-20dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginBottom="4dp"
                     android:fontFamily="@font/bungee"
                     android:includeFontPadding="false"
-                    android:text="123"
-                    android:textSize="25dp" />
+                    android:text="Edit Profile Info"
+                    android:textAlignment="center"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
@@ -141,16 +143,19 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/user_info_fragment_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="20dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/brown"
+        android:fontFamily="@font/bungee"
+        android:text="PLAY GAME" />
 
 </LinearLayout>

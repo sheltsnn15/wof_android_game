@@ -99,25 +99,25 @@ public class LoginActivity extends AppCompatActivity {
 
     public void loginUser() {
 
-        if (!validateEmail() | !validatePassword()) {
-            return;
-        }
-
-        // get values inputted by user
-        String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
-        String username = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
-        String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
-        progressBar.setVisibility(View.VISIBLE);
-
-        boolean checkUser = db_handler.checkUsernamePassword(username, password);
-        if (checkUser) {
-            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-            startActivity(intent);
-        } else {
-            Toast.makeText(LoginActivity.this, "Invalid Credentials, Login Unsuccessful", Toast.LENGTH_SHORT).show();
-        }
-        Boolean insert = db_handler.insertUserDetails(username, email, password);
+//        if (!validateEmail() | !validatePassword()) {
+//            return;
+//        }
+//
+//        // get values inputted by user
+//        String password = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
+//        String username = Objects.requireNonNull(password_til.getEditText()).getText().toString().trim();
+//        String email = Objects.requireNonNull(email_til.getEditText()).getText().toString().trim();
+//        progressBar.setVisibility(View.VISIBLE);
+//
+//        boolean checkUser = db_handler.checkUsernamePassword(username, password);
+//        if (checkUser) {
+        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+        startActivity(intent);
+//        } else {
+//            Toast.makeText(LoginActivity.this, "Invalid Credentials, Login Unsuccessful", Toast.LENGTH_SHORT).show();
+//        }
+//        Boolean insert = db_handler.insertUserDetails(username, email, password);
 
     }
 
